@@ -184,9 +184,9 @@ class _EMICalculatorState extends State<EMICalculator> {
                         ],
                         validator: (value) {
                           //  print(value);
-                          if (value!.isEmpty) {
-                            return 'Please enter loanAmount amount';
-                          }
+                          // if (value!.isEmpty) {
+                          //   return 'Please enter loanAmount amount';
+                          // }
                           return null;
                         },
                         onChanged: (value) {
@@ -226,9 +226,9 @@ class _EMICalculatorState extends State<EMICalculator> {
                               RegExp(r'^\d+\.?\d{0,10}')),
                         ],
                         validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter interest amount';
-                          }
+                          // if (value!.isEmpty) {
+                          //   return 'Please enter interest amount';
+                          // }
                           return null;
                         },
                         onChanged: (value) {
@@ -265,9 +265,9 @@ class _EMICalculatorState extends State<EMICalculator> {
                           FilteringTextInputFormatter.digitsOnly
                         ],
                         validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter tenure amount';
-                          }
+                          // if (value!.isEmpty) {
+                          //   return 'Please enter tenure amount';
+                          // }
                           return null;
                         },
                         onChanged: (value) {

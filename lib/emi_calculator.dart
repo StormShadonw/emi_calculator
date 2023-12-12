@@ -66,17 +66,51 @@ class _EMICalculatorState extends State<EMICalculator> {
     }
   }
 
+  double calculateInterestRate(double principal, double emi, double tenure) {
+    double monthlyRateGuess =
+        0.01; // Estimación inicial de la tasa de interés mensual
+
+    for (int i = 0; i < 100; i++) {
+      double newRateGuess = monthlyRateGuess -
+          (calculateEMI(principal, monthlyRateGuess, tenure) - emi) /
+              derivativeEMI(principal, monthlyRateGuess, tenure);
+
+      if ((newRateGuess - monthlyRateGuess).abs() < 0.0001) {
+        // Convergencia alcanzada
+        break;
+      }
+
+      monthlyRateGuess = newRateGuess;
+    }
+
+    double annualRate = monthlyRateGuess * 12 * 100; // Convertir a tasa anual
+    return annualRate;
+  }
+
+  double calculateEMI(double principal, double monthlyRate, double tenure) {
+    double numerador = monthlyRate * principal;
+    double denominador = 1 - pow(1 + monthlyRate, -tenure).toDouble();
+    return numerador / denominador;
+  }
+
+  double derivativeEMI(double principal, double monthlyRate, double tenure) {
+    double h = 0.0001; // Pequeño cambio en la tasa para calcular la derivada
+    double emi1 = calculateEMI(principal, monthlyRate, tenure);
+    double emi2 = calculateEMI(principal, monthlyRate + h, tenure);
+    return (emi2 - emi1) / h;
+  }
+
   void _calculateInterestRate() {
     print(" cal rate");
-    print(_loanAmount);
-    print(_tenure);
-    print(_emi);
     if (_formKey.currentState!.validate() &&
         _loanAmount != null &&
         _emi != null &&
         _tenure != null) {
-      double rate = (_emi! * 12 * 100) /
-          (_loanAmount! * (1 - (1 / pow((1 + _emi! / 12), _tenure!))));
+      double rate = calculateInterestRate(_loanAmount!, _emi!, _tenure!);
+      // double rate = ((_loanAmount! / (_emi! * _tenure!)) * 100) / 12;
+      // double rate = (_emi! * 12 * 100) /
+      //     (_loanAmount! * (1 - (1 / pow(((1 + _emi!) / 12), _tenure!))));
+      print("interest rate: ${_emi! * 12 * 100}");
       setState(() {
         _rateOfInterestResult = rate.toStringAsFixed(2);
         _rateOfInterestController =
@@ -376,7 +410,8 @@ class _EMICalculatorState extends State<EMICalculator> {
                       Text(
                           'Total Amount Payment:  ${(_loanAmount ?? 0.00).toStringAsFixed(2)}'),
                       const SizedBox(height: 8),
-                      Text('Total Interest Payment : $_rateOfInterest'),
+                      Text(
+                          'Total Interest Payment : ${(_rateOfInterest ?? 0.00).toStringAsFixed(2)}'),
                       const SizedBox(height: 8),
                       Text('First Month Interest :  $_tenure'),
                       const SizedBox(height: 8),
